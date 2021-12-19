@@ -1,0 +1,42 @@
+
+create user secondpj identified by 1234;
+grant connect, resource to secondpj;
+
+create table board (
+num number primary key,
+id varchar2(50) not null,
+title varchar2(200) not null,
+content varchar2(2000) not null,
+postdate date default sysdate not null,
+ofile varchar2(200),
+sfile varchar2(30),
+downcount number(5) default 0 not null,
+pass varchar2(50) not null,
+visitcount number default 0 not null,
+category varchar2(50) not null
+);
+
+drop table board;
+
+create table member (
+	id varchar2(10) primary key,
+	pass varchar2(10) NOT NULL,
+	name varchar2(30) NOT NULL, 
+  	email varchar2(25) NOT NULL,
+    addr varchar2(100) NOT NULL,
+    phone1 varchar2(20),
+    phone2 varchar2(20) NOT NULL,
+	identify varchar2(20) NOT NULL
+);
+
+drop table member;
+
+
+create sequence seq_board_num 
+    increment by 1
+    start with 1
+    minvalue 1
+    nomaxvalue
+    nocycle
+    nocache;
+drop sequence seq_board_num; 
