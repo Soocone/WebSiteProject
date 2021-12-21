@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<script src="https://code.jquery.com/ui/1.13.0/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -30,10 +32,25 @@
     <link rel="stylesheet" href="css/style.css">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
-
-
 </head>
+<script>
 
+	$(function(){
+		$('#deletebtn').click(function(){
+			$('#cleanlist').attr("action","../adminpage/ad_requstDelete.do").submit();			
+		})  		
+	});
+
+	function allCk(objCheck){ //전체 선택 checkbox 클릭
+		  var checks = document.getElementsByName('chk');
+		  for( var i = 0; i < checks.length; i++ ){
+		   checks[i].checked = objCheck;
+		// name이 'chk' 인 checkbox는  id가 allck인 checkbox의 checked 상태와 같게 된다. 
+		  }	
+	}
+
+	
+</script>
 <body id="page-top">
 
     <!-- Page Wrapper -->
@@ -88,8 +105,8 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Board Management:</h6>
-                        <a class="collapse-item" href="ad_notice.jsp">공지사항 관리</a>
-                        <a class="collapse-item" href="ad_program.jsp">프로그램일정 관리</a>
+                        <a class="collapse-item" href="ad_notice.jsp?cate=notB">공지사항 관리</a>
+                        <a class="collapse-item" href="ad_program.jsp?cate=proB">프로그램일정 관리</a>
                         <a class="collapse-item" href="ad_freeboard.jsp">자유게시판 관리</a>
                         <a class="collapse-item" href="ad_photo.jsp">사진게시판 관리</a>
                         <a class="collapse-item" href="ad_information.jsp">정보자료실 관리</a>
@@ -121,9 +138,10 @@
                 <div id="d" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Market Management:</h6>
+                        <a class="collapse-item" href="ad_suaRegist.jsp">상품 등록 관리</a>
                         <a class="collapse-item" href="ad_order.jsp">주문내역 관리</a>
                         <a class="collapse-item" href="ad_requst.jsp">견적의뢰 관리</a>
-                        <a class="collapse-item" href="ad_experience.jsp">체험학습 관리</a>
+                        <a class="collapse-item" href="../adminpage/ad_experience.do">체험학습 관리</a>
                     </div>
                 </div>
             </li>
@@ -339,6 +357,7 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
+                            	<form action="" id="cleanlist"><!-- 삭제처리할때 form -->
                                 <table class="table table-bordered table-hover">
                                     <thead>
                                         <tr>
@@ -353,58 +372,75 @@
                                         </tr>
                                         
                                 <c:choose>
-                                	<c:when test='${ empty marketApplication }'>
+                                	<c:when test="${ empty boardLists}">
                                 		<tbody>
                                 			<td colspan="6" align="center">등록된 게시물이 없습니다^^*</td>
                                 		</tbody>
 									</c:when>  
 									<c:otherwise>
 										<tbody>
-											<c:forEach items='${marketApplication }' var = "row" varStatus="loop">
-										     <tr>
-	                                            <td><input type="checkbox"></td>
-	                                            <td class="numbering">${ map.totalCount - (((map.pageNum-1) * map.pageSize) + loop.index)}</td>
-	                                            <td>${row.clean_type }</td>
-	                                            <td>${row.clean_area }</td>
-	                                            <td>${row.name }</td>
-	                                            <td>${row.date1 }</td>
-                                      		  </tr>   
+											
+											<c:forEach items='${boardLists }' var = "row" varStatus="loop">
+										     	<tr>
+		                                            <td><input type="checkbox" name="chk" value="${row.idx }"></td>
+		                                            <td class="numbering">${ map.totalCount - (((map.pageNum-1) * map.pageSize) + loop.index)}</td>
+		                                            <td>${row.clean_type }</td>
+		                                            <td>${row.clean_area }</td>
+		                                            <td>${row.name }</td>
+		                                            <td>${row.date }</td>
+                                      		 	 </tr>   
                                       		  </c:forEach> 
+                                      		  
 										</tbody>          
 									</c:otherwise>                	
-                                </c:choose>
+                               	 </c:choose>
                                     </thead>
                   
                                 </table>
+							</form>
 
-                                <!-- 검색 -->
-                                <form class="form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 admin-table-bottom-tool" style="justify-content: flex-end;">
-                                    <select class="selectpicker admin-search">
-                                        <option>청소종류</option>
-                                        <option>분양평수</option>
+                            
+                                <form action="../adminpage/ad_requst.do"
+                                class="form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 admin-table-bottom-tool" style="justify-content: flex-end;">
+                                    <select class="selectpicker admin-search" name="searchField">
+                                        <option value="name">고객명</option>
+                                        <option value="clean_area">분양평수</option>
                                       </select>
+                                     
                                       
                                     <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small" placeholder="검색어를 입력하세요" aria-label="Search" aria-describedby="basic-addon2">
+                                        <input type="text" name="searchWord" class="form-control bg-light border-0 small" placeholder="검색어를 입력하세요" aria-label="Search" aria-describedby="basic-addon2">
                                         <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
+                                            <button class="btn btn-primary" type="submit">
                                                 <i class="fas fa-search fa-sm"></i>
                                             </button>
-                                        </div>
+                                        </div>                                       
                                     </div>
+                                      
                                 </form>
+                                
                             </div>
                         </div>
                     </div>
+               	<%-- 	 <table border="0" width="90%">
+						<tr align="center">
+							<td>${ map.pagingImg }</td>
+					
+						</tr>
+					</table> --%>
 
                     <!-- 버튼 -->
                     <div class="board-btn-group01">
-                        <ul class="d-flex justify-content-end">
-                            <li><button type="button" class="btn btn-outline-secondary">삭제</button></li>
-                            <li><button type="button" class="btn btn-outline-primary">등록</button></li>
+                        <ul>
+                        	<li align="center">${ map.pagingImg }</li>
+                            <li class="d-flex justify-content-end">
+                            	<button type="button" class="btn btn-outline-secondary" id="deletebtn" >삭제</button>
+                            </li>
                         </ul>
                     </div>
                 </div>
+                
+                
                 <!-- /.container-fluid -->
 
             </div>

@@ -1,11 +1,47 @@
-<%@page import="board.BoardDTO"%>
+<%@page import="utils.BoardPage"%>
+<%@page import="membership.MemberDTO"%>
+<%@page import="membership.MemberDAO"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.HashMap"%>
 <%@page import="java.util.Map"%>
+<%@page import="board.BoardDTO"%>
 <%@page import="board.BoardDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-
+<%
+	
+	String cate = "notB";	
+	String cateUrl = request.getRequestURI();
+	BoardDAO dao = new BoardDAO();
+	Map<String, Object> param = new HashMap<String, Object>();
+	
+	String searchField = request.getParameter("searchField");
+	String searchWord = request.getParameter("searchWord");
+	
+	if(searchWord != null){
+		param.put("searchField", searchField);
+		param.put("searchWord", searchWord);
+		param.put("cate", cate);
+	}
+	
+	int totalCount = dao.selectCount(param, cate);
+	int pageSize = 10;
+	int blockPage = 5;
+	int totalPage = (int)Math.ceil((double)totalCount / pageSize);
+	int pageNum = 1;
+	
+	String pageTemp = request.getParameter("pageNum");
+	
+	if(pageTemp != null && !pageTemp.equals("")) pageNum = Integer.parseInt(pageTemp);
+	
+	int start = (pageNum - 1) * pageSize + 1;
+	int end = pageNum * pageSize;
+	param.put("start", start);
+	param.put("end", end);
+	
+	List<BoardDTO> boardLists = dao.selectList(param, cate);
+	dao.close();
+%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -345,9 +381,6 @@
                         <div class="card-body">
                             <div class="table-responsive">
                                 <table class="table table-bordered table-hover">
-                                    <colgroup>
-
-                                    </colgroup>
                                     <thead>
                                         <tr>
                                             <th class="boardCheckbox">
@@ -357,15 +390,65 @@
                                             <th class="boardtitle">제목</th>
                                             <th class="boardwriter">작성자</th>
                                             <th class="boarddate">작성일</th>
-                                            <th>첨부파일</th>
+                                            <th class="">조회수</th>
                                         </tr>
                                     </thead>
+                                    
+                                    
                                     <!-- 테이블 가공 (공지사항) -->
-                               
+                               		<tbody>
+										<%
+										if(boardLists.isEmpty()){
+										%>
+										<tr>
+											<td colspan="5" align="center">등록된 게시물이 없습니다.</td>
+										<tr>
+										<%
+										}else{
+											int virtualNum = 0;
+											int countNum = 0;
+											for(BoardDTO dto : boardLists){
+												virtualNum = totalCount - (((pageNum - 1) * pageSize) + countNum++);
+										%>
+										<tr onclick="location.href='board_view.jsp?cate=<%= cate %>&num=<%= dto.getNum() %>'">
+											<td><input type="checkbox"></td>
+											<td><%= virtualNum %></td>
+											<td><%= dto.getTitle() %></td>
+											<td><%= dto.getName() %></td>
+											<td><%= dto.getPostdate() %></td>
+											<td><%= dto.getVisitcount() %></td>
+										</tr>
+										<%
+											}
+										}
+										%>
+									</tbody>
                                     
                                 </table>
 
-                                
+				
+								<div class="boardTool">
+									<div class="tool_Paging">
+										<ul>
+											<%= BoardPage.pagingStr(totalCount, pageSize, blockPage, pageNum, request.getRequestURI()) %>
+										</ul>
+									</div>
+									
+									<div class="tool_Search">
+										<form method="get">  
+											<input type="hidden" name="cate" value="<%= cate %>"/>
+											<select name="searchField">
+												<option value="title">제목</option>
+												<option value="id">작성자</option>
+											</select>
+											<div>
+												<input type="text" name="searchWord" placeholder="검색어를 입력하세요" value=""/>								
+												<button type="submit" value="">검색</button>
+											</div>
+										</form>							
+									</div>
+								</div>
+
                             </div>
                         </div>
                     </div>
