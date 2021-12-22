@@ -43,7 +43,7 @@ public class sub01Controller extends HttpServlet{
         String pageTemp = req.getParameter("pageNum");
         if (pageTemp != null && !pageTemp.equals(""))
             pageNum = Integer.parseInt(pageTemp); //정수로 변경한 후 저장 
-
+ 
         //게시물의 구간을 계산
         int start = (pageNum - 1) * pageSize + 1;   
         int end = pageNum * pageSize;  

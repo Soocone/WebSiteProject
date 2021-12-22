@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ include file="../include/global_head.jsp" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <!--
 
@@ -20,6 +21,7 @@
 </head>
 
  <body>
+	<%-- <center> --%>
 	<div id="wrap">
 		<%@ include file="../include/top.jsp" %>
 
@@ -52,6 +54,7 @@
 							<th>수량</th>
 							<th>구매</th>
 						</tr>
+
 						<c:choose>
 							<c:when test="${ empty boardLists }">
 								<!-- 게시물이 없을 때 -->
@@ -74,7 +77,7 @@
 										<!-- 제목 -->
 									 	 <td class="t_left"><a href="../market/market_view.do?product_no=${row.product_no }">${ row.product_name }</a></td>
 										<!-- 가격 -->
-										 <td class="p_style">${ row.price }</td>
+										 <td class="p_style"><fmt:formatNumber value="${ row.price }" pattern="#,###"/></td>
 										<!-- 수량텍스트박스 -->
 										<td><input type="text" name="" value="1" class="n_box" /></td>
 										<!-- 구매버튼2개 -->
@@ -85,19 +88,21 @@
 								</c:forEach>
 							</c:otherwise>
 						</c:choose>
-						
-				</table>
+					</table>
 
-				<table border="1" width="90%">
-					<tr align="center">
-						<td>${ map.pagingImg }</td>
-					</tr>
-				</table>
-			</div>
+					<table border="1" width="90%">
+						<tr align="center">
+							<td>${ map.pagingImg }</td>
+					
+						</tr>
+					</table>
+				</div>
 		</div>
 		<%@ include file="../include/quick.jsp" %>
 	</div>
+	
 
 	<%@ include file="../include/footer.jsp" %>
+	<%-- </center> --%>
  </body>
 </html>
