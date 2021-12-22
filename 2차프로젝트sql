@@ -66,7 +66,7 @@ ALTER TABLE board
 alter table board drop constraint board_mem_fk;
 
 
-? 수아밀제품 상품관리 / 제품정보 저장용 테이블
+-- 수아밀제품 상품관리 / 제품정보 저장용 테이블
 CREATE TABLE product
 (
     product_no varchar2(10) primary key,
@@ -77,9 +77,15 @@ CREATE TABLE product
     product_ofile varchar2(20),
     product_sfile varchar2(20)
 ); 
+
+--속성변경
+alter table product modify product_sfile varchar2(50);
+alter table product modify product_no varchar2(10);
+
+
 drop table product;
 
-?테스트용 더미데이터
+--테스트용 더미데이터
 insert into product (product_no, product_name, price, milage, product_info, product_ofile, product_sfile)
 values (seq_board_num.nextval, 'cake1', 10000, 100, 'cake1입니다','0','img1.jpg');
 insert into product (product_no, product_name, price, milage, product_info, product_ofile, product_sfile)
@@ -93,9 +99,34 @@ values (seq_board_num.nextval, 'cake5', 50000, 500, 'cake5입니다','0','img1.jpg'
 insert into product (product_no, product_name, price, milage, product_info, product_ofile, product_sfile)
 values (seq_board_num.nextval, 'cake6', 60000, 500, 'cake6입니다','0','img2.jpg');
 
-delete from product where product_no=5;
+delete from product where product_no=39;
+commit;
+
+--수정된 더미데이터 
+insert into product (product_no, product_name, product_info, price,milage, product_ofile, product_sfile)
+values (seq_board_num.NEXTVAL, '제품1', 'cake1입니다', 10000, 100, '20211221-165447', 'img1.jpg');
+insert into product (product_no, product_name, product_info, price,milage, product_ofile, product_sfile)
+values (seq_board_num.NEXTVAL, '제품2', 'cake2입니다', 20000, 200, '20211221-165447', 'img2.jpg');
+insert into product (product_no, product_name, product_info, price,milage, product_ofile, product_sfile)
+values (seq_board_num.NEXTVAL, '제품3', 'cake3입니다', 1000, 10, '20211221-165447', 'img2.jpg');
+insert into product (product_no, product_name, product_info, price,milage, product_ofile, product_sfile)
+values (seq_board_num.NEXTVAL, '제품4', 'cake4입니다', 5000, 50, '20211221-165447', 'img1.jpg');
+insert into product (product_no, product_name, product_info, price,milage, product_ofile, product_sfile)
+values (seq_board_num.NEXTVAL, '제품5', 'cake1입니다5', 7000, 70, '20211221-165447', 'img2.jpg');
+insert into product (product_no, product_name, product_info, price,milage, product_ofile, product_sfile)
+values (seq_board_num.NEXTVAL, '제품6', 'cake1입니다6', 10000, 100, '20211221-165447', 'img1.jpg');
 
 
+
+
+SELECT * FROM ( 
+    SELECT Tb.*, ROWNUM rNum FROM (
+        SELECT * FROM product
+        ORDER BY PRODUCT_NO desc) Tb )
+            WHERE (rNum BETWEEN 1 AND 13 );
+            
+SELECT * FROM product
+        ORDER BY product_no desc;            
 
 ? 오픈마켓 (블루클리닝이랑 체험학습)
 CREATE TABLE marketApplication
@@ -113,8 +144,37 @@ CREATE TABLE marketApplication
     clean_type varchar2(10),
     clean_area varchar2(10),
     ex_disabled varchar2(10),
-    ex_typeofdisability varchar2(10),
+    ex_typeofdisability varchar2(100),
     ex_helpingtool varchar2(10),
-    ex_nameoftool varchar2(10)
+    ex_nameoftool varchar2(100),
+    ex_type varchar2(20)
 );    
     drop table marketApplication;
+    
+-- 체험학습용 더미데이터 삽입
+insert into marketApplication (idx, name, phone1, phone2, email, date1, submit_type,
+    others, app_type, ex_disabled, ex_typeofdisability, ex_helpingtool, ex_type)
+values (seq_board_num.nextval, '회사이름1', '010-1234-1234', '010-1000-1000', 'qweqwe@naver.com',
+    '2021-12-30','estm', '기타문의', 'experience', 'Y', '장애종류', 'N', 'baking');
+insert into marketApplication (idx, name, phone1, phone2, email, date1, submit_type,
+    others, app_type, ex_disabled, ex_typeofdisability, ex_helpingtool, ex_type)
+values (seq_board_num.nextval, '회사이름2', '010-1234-1234', '010-1000-1000', 'qweqwe@naver.com',
+    '2021-12-30','estm', '기타문의사항', 'experience', 'Y', '장애종류', 'N', 'cookie');
+insert into marketApplication (idx, name, phone1, phone2, email, date1, submit_type,
+    others, app_type, ex_disabled, ex_typeofdisability, ex_helpingtool, ex_type)
+values (seq_board_num.nextval, '회사이름3', '010-1234-1234', '010-1000-1000', 'qweqwe@naver.com',
+    '2021-12-30','estm', '기타문의사항', 'experience', 'Y', '장애종류', 'N', 'cake');
+insert into marketApplication (idx, name, phone1, phone2, email, date1, submit_type,
+    others, app_type, ex_disabled, ex_typeofdisability, ex_helpingtool, ex_type)
+values (seq_board_num.nextval, '회사이름4', '010-1234-1234', '010-1000-1000', 'qweqwe@naver.com',
+    '2021-12-30','estm', '기타문의', 'experience', 'Y', '장애종류', 'N', 'baking');
+insert into marketApplication (idx, name, phone1, phone2, email, date1, submit_type,
+    others, app_type, ex_disabled, ex_typeofdisability, ex_helpingtool, ex_type)
+values (seq_board_num.nextval, '회사이름5', '010-1234-1234', '010-1000-1000', 'qweqwe@naver.com',
+    '2021-12-30','estm', '기타문의사항', 'experience', 'Y', '장애종류', 'N', 'cookie');
+insert into marketApplication (idx, name, phone1, phone2, email, date1, submit_type,
+    others, app_type, ex_disabled, ex_typeofdisability, ex_helpingtool, ex_type)
+values (seq_board_num.nextval, '회사이름6', '010-1234-1234', '010-1000-1000', 'qweqwe@naver.com',
+    '2021-12-30','estm', '기타문의사항', 'experience', 'Y', '장애종류', 'N', 'baking');
+delete from marketApplication where idx=19;
+commit;
